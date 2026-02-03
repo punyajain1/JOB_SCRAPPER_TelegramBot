@@ -158,23 +158,9 @@ def job_search():
                     cleaned_job[key] = value
             cleaned_jobs.append(cleaned_job)
         
-        # Save backup locally
-        filename = f"jobs_{datetime.now().strftime('%Y%m%d_%H%M')}.json"
-        backup_data = {
-            'timestamp': datetime.now().isoformat(),
-            'search_term': search_term,
-            'location': location,
-            'total_jobs': len(cleaned_jobs),
-            'jobs': cleaned_jobs
-        }
-        
-        with open(filename, 'w') as f:
-            json.dump(backup_data, f, indent=2, default=json_serial)
-        
         print(f"✅ Found {len(cleaned_jobs)} jobs")
-        print(f"💾 Saved to: {filename}")
         
-        # Return the scraped data directly to n8n
+        # Return the scraped data directly
         return jsonify({
             'success': True,
             'message': f'Successfully scraped {len(cleaned_jobs)} jobs',
@@ -183,7 +169,6 @@ def job_search():
             'location': location,
             'total_jobs': len(cleaned_jobs),
             'sites_searched': current_sites,
-            'backup_file': filename,
             'jobs': cleaned_jobs
         }), 200
     

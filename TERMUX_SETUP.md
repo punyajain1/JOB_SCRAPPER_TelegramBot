@@ -1,12 +1,24 @@
-# 📱 Termux Setup Guide for Job Automation
+# 📱 Termux Setup Guide for Job Automation (Hybrid Cloud Setup)
 
 ## 🎯 Overview
-This guide will help you run the Job Automation system + n8n **locally** on your Android tablet using Termux (4GB RAM).
+This guide helps you run **n8n locally** on your Android tablet while using a **cloud-hosted Flask server** on Railway.
 
-**What you'll run:**
-- ✅ Python Flask server (Job scraper API)
+**Architecture:**
+```
+┌─────────────────────┐      ┌──────────────────┐
+│  Flask Server       │◄─────│  n8n (Local)     │
+│  Railway (Cloud)    │      │  Your Termux     │
+│  Always Available   │      │  Privacy + Free  │
+└─────────────────────┘      └──────────────────┘
+```
+
+**What you'll run locally:**
 - ✅ n8n workflow automation (Node.js)
-- ✅ Both running simultaneously in background
+- ✅ Lightweight & Battery-friendly
+
+**What runs in the cloud:**
+- ✅ Flask server (Railway free tier)
+- ✅ Always accessible, no ngrok needed
 
 ---
 
@@ -18,59 +30,14 @@ This guide will help you run the Job Automation system + n8n **locally** on your
 # Update packages
 pkg update && pkg upgrade -y
 
-# Install required packages
-pkg install python nodejs git openssh termux-services -y
+# Install Node.js for n8n
+pkg install nodejs git -y
 
-# Install proot for better compatibility
-pkg install proot-distro -y
-
-# Create project directory
-mkdir -p ~/job-automation
-cd ~/job-automation
+# Optional: Install termux-services for better process management
+pkg install termux-services -y
 ```
 
-### Step 2: Install Python Dependencies
-
-```bash
-# Upgrade pip
-pip install --upgrade pip
-
-# Install dependencies
-# Note: Some packages might fail on Termux, we'll handle that
-pip install flask python-dotenv requests pandas beautifulsoup4 lxml pydantic
-
-# Install remaining deps (some might need compilation)
-pip install markdownify tls-client urllib3 certifi regex
-
-# If numpy fails, use this special command:
-pkg install python-numpy -y  # Use Termux's prebuilt numpy
-```
-
-### Step 3: Get the Code
-
-**Option A: Git Clone (Recommended)**
-```bash
-cd ~/job-automation
-# Replace with your actual repo URL
-git clone https://github.com/yourusername/job-automation.git .
-```
-
-**Option B: Manual Download & Copy**
-If you downloaded the code manually (e.g., zip file):
-
-1. **Extract** the zip file in your phone's Downloads folder.
-2. **Setup storage access** in Termux:
-   ```bash
-   termux-setup-storage
-   # Click 'Allow' on the permission popup
-   ```
-3. **Copy files** (assuming folder is in Downloads):
-   ```bash
-   # Adjust folder name if needed
-   cp -r /sdcard/Download/job_automation/* ~/job-automation/
-   ```
-
-### Step 4: Install n8n
+### Step 2: Install n8n
 
 ```bash
 # Install n8n globally
@@ -80,19 +47,22 @@ npm install -g n8n
 mkdir -p ~/.n8n
 ```
 
-### Step 5: Configure Environment Variables
+### Step 3: Get Your Flask Server URL
 
-1. **No `.env` file needed anymore!** We now send configuration directly via the API.
+Your Flask server is already deployed on Railway. You should have received a URL like:
+```
+https://your-app.up.railway.app
+```
 
-2. However, if you want to set custom API parameters, you'll do that inside n8n or your curl request.
+If you haven't deployed yet, see the [RAILWAY_DEPLOYMENT.md](RAILWAY_DEPLOYMENT.md) guide (it takes 5 minutes).
 
 ---
 
-## 🚀 Running the Services
+## 🚀 Running n8n
 
 ### Method 1: Using tmux (Recommended)
 
-tmux allows you to run multiple sessions that persist when you close Termux.
+tmux keeps n8n running even when you close Termux.
 
 ```bash
 # Install tmux
@@ -101,108 +71,78 @@ pkg install tmux -y
 # Create a tmux session
 tmux new-session -s automation
 
-# Split into 2 panes (Ctrl+b then ")
-# Top pane: n8n
-# Bottom pane: Flask server
-
-# In top pane, start n8n:
-n8n start --tunnel
-
-# Switch to bottom pane (Ctrl+b then arrow down)
-# Start Flask server:
-cd ~/job-automation
-python server.py
+# Start n8n:
+n8n start
 
 # Detach from tmux session: Ctrl+b then d
 # Reattach later: tmux attach -t automation
 # Kill session: tmux kill-session -t automation
 ```
 
-### Method 2: Using Background Processes
+### Method 2: Using Background Process
 
 ```bash
 # Start n8n in background
 nohup n8n start > ~/n8n.log 2>&1 &
 
-# Start Flask server in background
-cd ~/job-automation
-nohup python server.py > ~/server.log 2>&1 &
-
 # View logs
-tail -f ~/n8n.log      # n8n logs
-tail -f ~/server.log   # Flask logs
+tail -f ~/n8n.log
 
-# Stop processes later
+# Stop n8n later
 pkill -f n8n
-pkill -f server.py
 ```
 
-### Method 3: Create Startup Scripts
+### Method 3: Using PM2 (Production-Ready)
+
+```bash
+# Install PM2 (Process Manager)
+npm install -g pm2
+
+# Start n8n
+pm2 start n8n
+
+# Check status
+pm2 list
+
+# Monitor logs
+pm2 logs n8n
+
+# Stop n8n
+pm2 stop n8n
+
+# Auto-restart on reboot (optional)
+pm2 startup
+pm2 save
+```
+
+### Quick Start Script
 
 Create a convenient startup script:
 
 ```bash
-cat > ~/start-automation.sh << 'EOF'
+cat > ~/start-n8n.sh << 'EOF'
 #!/data/data/com.termux/files/usr/bin/bash
 
-echo "🚀 Starting Job Automation System..."
-
-# Start n8n
-echo "📊 Starting n8n..."
+echo "🚀 Starting n8n Workflow Automation..."
 nohup n8n start > ~/n8n.log 2>&1 &
-N8N_PID=$!
-echo "n8n started with PID: $N8N_PID"
 
-# Wait for n8n to start
-sleep 5
-
-# Start Flask server
-echo "🔍 Starting Job Scraper Server..."
-cd ~/job-automation
-nohup python server.py > ~/server.log 2>&1 &
-SERVER_PID=$!
-echo "Server started with PID: $SERVER_PID"
-
+sleep 3
 echo ""
-echo "✅ All services started!"
+echo "✅ n8n started!"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "📊 n8n:         http://localhost:5678"
-echo "🔍 Job Server:  http://localhost:5000"
+echo "📊 n8n Dashboard: http://localhost:5678"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo ""
-echo "View logs:"
-echo "  n8n:     tail -f ~/n8n.log"
-echo "  server:  tail -f ~/server.log"
-echo ""
-echo "To stop:"
-echo "  bash ~/stop-automation.sh"
+echo "View logs: tail -f ~/n8n.log"
+echo "Stop: pkill -f n8n"
 EOF
 
-# Make executable
-chmod +x ~/start-automation.sh
+chmod +x ~/start-n8n.sh
 ```
 
-Create a stop script:
-
+Now just run:
 ```bash
-cat > ~/stop-automation.sh << 'EOF'
-#!/data/data/com.termux/files/usr/bin/bash
-
-echo "🛑 Stopping Job Automation System..."
-
-# Stop n8n
-pkill -f n8n
-echo "✅ n8n stopped"
-
-# Stop Flask server
-pkill -f server.py
-echo "✅ Server stopped"
-
-echo "🏁 All services stopped!"
-EOF
-
-# Make executable
-chmod +x ~/stop-automation.sh
+bash ~/start-n8n.sh
 ```
 
 ---
@@ -211,7 +151,8 @@ chmod +x ~/stop-automation.sh
 
 1. **Start n8n** (if not already running):
    ```bash
-   n8n start
+   bash ~/start-n8n.sh
+   # Or: n8n start
    ```
 
 2. **Access n8n**:
@@ -219,9 +160,10 @@ chmod +x ~/stop-automation.sh
    - Create an account (all data stored locally)
 
 3. **Create the workflow**:
-   - Addan HTTP Request node
-   - Method: POST
-   - URL: `http://localhost:5000/job-search`
+   - Add an **HTTP Request** node
+   - Method: **POST**
+   - URL: `https://your-app.up.railway.app/job-search` ⬅️ **Use your Railway URL**
+   - Body Content Type: JSON
    - Body Parameters:
      ```json
      {
@@ -232,7 +174,9 @@ chmod +x ~/stop-automation.sh
      }
      ```
 
-4. **Activate the workflow** in n8n
+4. **Test it**: Click "Test Workflow" to ensure it connects to your Railway server
+
+5. **Activate the workflow** by toggling the switch in the top-right corner
 
 ---
 
@@ -254,17 +198,18 @@ You currently have to click "Execute" manually. To make it run automatically on 
    - *Note: In "Active" mode, the generic "Execute Workflow" button changes behavior. You usually rely on the triggers now.*
 
 ### 3. Use PM2 for Process Management (Better than nohup)
-For a true "production" feel where apps restart if they crash:
+For a true "production" feel where n8n restarts if it crashes:
 
 ```bash
 # Install PM2 (Process Manager)
 npm install -g pm2
 
-# Start n8n
+# Start n8n with PM2
 pm2 start n8n
 
-# Start Flask Server
-pm2 start server.py --interpreter python3
+# Save the process list (auto-restart on reboot)
+pm2 save
+pm2 startup
 
 # Check status
 pm2 list
@@ -272,44 +217,45 @@ pm2 list
 # Monitor logs
 pm2 monit
 
-# Stop everything
-pm2 stop all
+# Stop n8n
+pm2 stop n8n
 ```
 
 ---
 
 ## 📊 Resource Management (4GB RAM)
 
-Your tablet has 4GB RAM. Here's the typical usage:
+Your tablet has 4GB RAM. With Flask on the cloud, you only need to run n8n locally:
 
 | Service | RAM Usage | Notes |
 |---------|-----------|-------|
 | Android OS | ~1.5 GB | System |
-| Termux | ~200 MB | Base |
-| Python/Flask | ~150 MB | Job scraper |
+| Termux | ~100 MB | Base |
 | n8n (Node.js) | ~300 MB | Workflow engine |
-| **Total** | **~2.15 GB** | **You have 1.8GB free** ✅ |
+| **Total** | **~1.9 GB** | **You have 2GB+ free** ✅ |
 
-**Tips to save RAM:**
+**Much lighter than running both services locally!**
+
+**Tips:**
 - Close other apps while running automation
-- Use `top` command to monitor: `pkg install htop && htop`
-- If RAM is tight, run one service at a time
+- Use `htop` to monitor: `pkg install htop -y && htop`
+- n8n uses very little power when idle
 
 ---
 
 ## 🧪 Testing Your Setup
 
-### Test 1: Check Flask Server
+### Test 1: Check Your Railway Server
 ```bash
 # Health check
-curl http://localhost:5000/health
+curl https://your-app.up.railway.app/health
 
 # Should return: {"status":"healthy","message":"Job Scraper Server is running"}
 ```
 
-### Test 2: Test Job Search
+### Test 2: Test Job Search from Termux
 ```bash
-curl -X POST http://localhost:5000/job-search \
+curl -X POST https://your-app.up.railway.app/job-search \
   -H "Content-Type: application/json" \
   -d '{
     "SEARCH_TERM": "python developer",
@@ -322,84 +268,82 @@ curl -X POST http://localhost:5000/job-search \
 ### Test 3: Check n8n
 - Open browser: `http://localhost:5678`
 - Should see n8n dashboard
+- Create a workflow pointing to your Railway URL
 
 ---
 
 ## 🔄 Auto-Start on Boot (Optional)
 
-Make services start automatically when you open Termux:
+Make n8n start automatically when you open Termux:
 
 ```bash
 # Edit bash profile
 nano ~/.bashrc
 
 # Add these lines at the end:
-echo "Job Automation System available"
-echo "Start: bash ~/start-automation.sh"
-echo "Stop:  bash ~/stop-automation.sh"
+echo ""
+echo "Job Automation System"
+echo "━━━━━━━━━━━━━━━━━━━━━━"
+echo "Start n8n: bash ~/start-n8n.sh"
+echo "Stop n8n:  pkill -f n8n"
+echo "Status:    pm2 list"
+echo ""
 ```
 
 ---
 
 ## 🐛 Troubleshooting
 
-### Problem: numpy installation fails
+### Problem: Can't connect to Railway server
 ```bash
-# Use Termux's prebuilt version
-pkg install python-numpy -y
+# Check if your Railway app is running
+curl https://your-app.up.railway.app/health
+
+# If it fails, redeploy on Railway or check Railway dashboard
 ```
 
-### Problem: lxml installation fails
+### Problem: n8n won't start
 ```bash
-pkg install libxml2 libxslt -y
-pip install lxml
-```
+# Check if port 5678 is in use
+netstat -tuln | grep 5678
 
-### Problem: Can't access from other devices
-```bash
-# Find your tablet's IP
-ifconfig
-
-# Run Flask with external access:
-# Edit server.py, change the last line to:
-# app.run(host='0.0.0.0', port=5000, debug=True)
-```
-
-### Problem: Port already in use
-```bash
-# Kill process on port 5000
-pkill -f server.py
-
-# Kill process on port 5678
+# Kill any existing n8n process
 pkill -f n8n
+
+# Try starting again
+n8n start
 ```
 
-### Problem: Services stop when closing Termux
-- Use **tmux** (Method 1) or **background processes** (Method 2)
-- Install: `pkg install termux-services`
+### Problem: Workflow not triggering
+- Make sure the workflow is **Active** (toggle in top-right)
+- Check if the Railway URL is correct in your HTTP Request node
+- Test the URL manually with curl first
+
+### Problem: n8n stops when closing Termux
+- Use **tmux** or **PM2** (see Methods 1 & 3 above)
+- Don't use simple `n8n start` in foreground
 
 ---
 
-## 📱 Using from Browser
+## 📱 Accessing Your System
 
-Once everything is running:
+**On your tablet:**
+- n8n Dashboard: `http://localhost:5678`
+- Flask Server: `https://your-app.up.railway.app` ⬅️ Works from anywhere!
 
-1. **On your tablet**:
-   - n8n: `http://localhost:5678`
-   - API: `http://localhost:5000`
-
-2. **From other devices on same WiFi**:
-   - Find tablet IP: `ifconfig` (look for wlan0)
-   - n8n: `http://TABLET_IP:5678`
-   - API: `http://TABLET_IP:5000`
+**From other devices (same WiFi):**
+- Find tablet IP: `ifconfig` (look for wlan0)
+- n8n: `http://TABLET_IP:5678`
+- Flask: `https://your-app.up.railway.app` (no IP needed - it's on the cloud!)
 
 ---
 
 ## 💡 Pro Tips
 
-1. **Save battery**: Services consume battery. Stop when not needed.
+1. **Save battery**: n8n uses minimal power when idle. Stop it when not needed:
    ```bash
-   bash ~/stop-automation.sh
+   pkill -f n8n
+   # Or: pm2 stop n8n
    ```
 
 2. **Monitor resources**:
@@ -408,70 +352,91 @@ Once everything is running:
    htop
    ```
 
-3. **View logs in real-time**:
+3. **View n8n logs**:
    ```bash
-   tail -f ~/n8n.log ~/server.log
+   tail -f ~/n8n.log
+   # Or: pm2 logs n8n
    ```
 
-4. **Backup your work**:
+4. **Update n8n**:
    ```bash
-   cd ~/job-automation
-   tar -czf backup-$(date +%Y%m%d).tar.gz .
-   ```
-
-5. **Update dependencies**:
-   ```bash
-   pip install --upgrade -r requirements.txt
    npm update -g n8n
+   ```
+
+5. **Backup your n8n workflows**:
+   ```bash
+   cd ~/.n8n
+   tar -czf n8n-backup-$(date +%Y%m%d).tar.gz .
    ```
 
 ---
 
-## 🚫 Why NOT Docker on Termux?
+## 🌟 Why This Setup is Better
 
-- ❌ Docker requires root access (Termux is non-root)
-- ❌ Heavy resource usage (your 4GB RAM would struggle)
-- ❌ Unreliable on Android (proot-docker has many issues)
-- ✅ Native installation is faster, lighter, and more stable
+✅ **Lighter on Termux**: Only runs n8n (300MB) instead of Flask + n8n (500MB+)  
+✅ **No Python dependencies**: Skip installing pandas, numpy, etc. on Termux  
+✅ **Always accessible**: Flask server on Railway never goes down  
+✅ **Better battery**: Less CPU usage = longer battery life  
+✅ **Easier updates**: Update Flask on Railway without touching your tablet  
+✅ **Still free**: Railway free tier + local n8n = $0/month  
 
 ---
 
 ## 📞 Need Help?
 
-Check logs:
+Check n8n logs:
 ```bash
 tail -100 ~/n8n.log
-tail -100 ~/server.log
+# Or: pm2 logs n8n
 ```
 
 Check running processes:
 ```bash
-ps aux | grep -E 'n8n|python'
+ps aux | grep n8n
+# Or: pm2 list
 ```
 
-Check ports:
+Test Railway server:
 ```bash
-netstat -tuln | grep -E '5000|5678'
+curl https://your-app.up.railway.app/health
 ```
 
 ---
 
 ## 🎉 You're All Set!
 
-Your job automation system is now running locally on your Android tablet:
-- ✅ No cloud needed
-- ✅ Complete privacy
-- ✅ Free to use
-- ✅ Runs in background
+Your job automation system is now running in **hybrid mode**:
+- ✅ Flask server on Railway (cloud)
+- ✅ n8n on Termux (local)
+- ✅ Best of both worlds!
+- ✅ Completely free
 
-**Start automation:**
+**Start n8n:**
 ```bash
-bash ~/start-automation.sh
+bash ~/start-n8n.sh
+# Or: pm2 start n8n
 ```
 
-**Stop automation:**
+**Stop n8n:**
 ```bash
-bash ~/stop-automation.sh
+pkill -f n8n
+# Or: pm2 stop n8n
+```
+
+**Your Flask API URL:**
+```
+https://your-app.up.railway.app/job-search
 ```
 
 Happy job hunting! 🚀
+
+---
+
+## 📚 Next Steps
+
+1. **Deploy Flask to Railway**: See [RAILWAY_DEPLOYMENT.md](RAILWAY_DEPLOYMENT.md)
+2. **Create n8n Workflows**: Point them to your Railway URL
+3. **Set up Schedule Triggers**: For automatic job scraping
+4. **Configure Email Notifications**: Using SMTP in n8n
+
+Need the Railway deployment guide? Let me know!
