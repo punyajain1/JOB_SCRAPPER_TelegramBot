@@ -1,3 +1,8 @@
+#Using it Earliler when i was just figuring out how can i build this scraper it was just a file using webhooks to trigger the job scraping
+
+#Now i have made it more modular and added server.py to handle the webhooks and job_scraper_webhook.py to handle the scraping logic
+
+
 import urllib3
 import ssl
 import os

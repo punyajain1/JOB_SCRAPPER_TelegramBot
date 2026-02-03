@@ -28,19 +28,68 @@ A powerful, **locally run** job automation system that scrapes jobs from **Indee
 ## 🛠️ Tech Stack
 
 - **Python (Flask)**: Core API server for scraping logic.
-- **JobSpy**: Powerful scraping library (integrated directly, not as package).
+- **JobSpy**: Powerful job scraping library (integrated as local module).
 - **n8n (Self-Hosted)**: Workflow orchestration tool.
 - **Ngrok**: For secure local tunneling (optional).
+
+## 🔧 How JobSpy Integration Works
+
+This project uses **[JobSpy](https://github.com/Bunsly/JobSpy)** - a Python library for scraping job postings from multiple job boards.
+
+### Integration Approach
+
+Instead of installing JobSpy as a pip package, we integrate it **directly as a local module** (`JobSpy-main_new/`):
+
+```python
+# In server.py
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'JobSpy-main_new'))
+from jobspy import scrape_jobs
+```
+
+**Why this approach?**
+- ✅ **Full Control**: Customize JobSpy's behavior if needed
+- ✅ **Version Lock**: No breaking changes from package updates
+- ✅ **Offline Deploy**: Works in restricted environments (Railway, Termux)
+- ✅ **Dependencies Bundled**: All requirements in one `requirements.txt`
+
+### What JobSpy Does
+
+JobSpy handles all the heavy lifting:
+1. **Multi-site scraping** - Connects to Indeed, LinkedIn, Glassdoor, etc.
+2. **Data normalization** - Returns consistent job data structure
+3. **Smart filtering** - Applies location, job type, and recency filters
+4. **Rate limit handling** - Manages request timing per site
+
+### Our Wrapper Layer
+
+The Flask server (`server.py`) acts as a **clean REST API wrapper** around JobSpy:
+- Accepts simple JSON parameters
+- Maps them to JobSpy's function signature
+- Returns cleaned, JSON-serialized results
+- Handles errors gracefully
+
+**Example Flow:**
+```
+User/n8n → POST /job-search → Flask API → JobSpy Library → Job Sites → Results
+```
+
+### Supported Sites via JobSpy
+
+JobSpy currently supports these platforms:
+- Indeed, LinkedIn, Glassdoor, Google Jobs (Global)
+- ZipRecruiter (USA/Canada)
+- Naukri, Internshala (India)
+- Bayt (Middle East)
+- BDJobs (Bangladesh)
+
+---
 
 ## ⚡ Quick Start
 
 ### 1. Installation
 
 ```bash
-# Automated install (Mac/Linux/Termux)
-./install.sh
-
-# OR Manual install
+# Manual install
 pip install -r requirements.txt
 ```
 
@@ -65,9 +114,15 @@ Create an HTTP Request node in n8n sending a POST request to `http://localhost:5
 }
 ```
 
-### 4. Android (Termux) Setup
+### 4. Android (Termux) Setup (Optional - For Testing)
 
-See [TERMUX_SETUP.md](TERMUX_SETUP.md) for a detailed guide on running this entire stack on your Android device!
+**Note:** The Termux setup is **optional** and was used for testing on an old Android device. It's **not necessary** for production use.
+
+For production, it's recommended to:
+- Deploy Flask server on **Railway** (free cloud hosting)
+- Run n8n locally on your main computer or use n8n Cloud
+
+If you still want to experiment with Termux, see [TERMUX_SETUP.md](TERMUX_SETUP.md) for details.
 
 ---
 
@@ -107,9 +162,6 @@ No `.env` file required! All parameters are passed directly via the API.
   ]
 }
 ```
-
-### Local Backup
-Jobs are also saved locally as `jobs_YYYYMMDD_HHMM.json`
 
 ---
 

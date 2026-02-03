@@ -184,41 +184,145 @@ bash ~/start-n8n.sh
 
 You currently have to click "Execute" manually. To make it run automatically on its own:
 
-### 1. Add a Schedule Trigger
- If you want it to scrape automatically (e.g., every day):
-1. Add a **Schedule Trigger** node in n8n.
-2. Configure it (e.g., "Interval" -> 3 hours).
-3. Connect it to your **HTTP Request** node.
+### Understanding Triggers in n8n
 
-### 2. Activate the Workflow
-**This is the most important step!**
-1. Look at the top-right corner of your n8n canvas.
-2. Toggle the switch from **Inactive** to **Active**.
-3. Confirm the dialog.
-   - *Note: In "Active" mode, the generic "Execute Workflow" button changes behavior. You usually rely on the triggers now.*
+**Your workflow has 2 triggers** - here's how they work:
 
-### 3. Use PM2 for Process Management (Better than nohup)
-For a true "production" feel where n8n restarts if it crashes:
+1. **Manual Trigger** - For testing (click "Execute Workflow")
+2. **Automatic Trigger** - For production (runs on its own)
+
+### Step 1: Choose Your Trigger Type
+
+**Option A: Schedule Trigger** (Most Common)
+For automatic scraping at specific times/intervals:
+
+1. In n8n, click **"+"** to add a node
+2. Search for **"Schedule Trigger"**
+3. Configure it:
+   - **Interval**: Run every X hours/days
+     - Example: Every 3 hours
+     - Example: Every day at 9 AM
+   - **Cron Expression**: Advanced scheduling
+     - Example: `0 9,17 * * *` (9 AM and 5 PM daily)
+
+**Option B: Webhook Trigger**
+For triggering from external systems:
+
+1. Add a **"Webhook"** node
+2. n8n will give you a URL like: `http://localhost:5678/webhook/job-trigger`
+3. Call this URL to trigger the workflow
+
+### Step 2: Connect Your Trigger
+
+1. **Delete or disconnect** the manual trigger node
+2. **Connect** your Schedule/Webhook trigger to the HTTP Request node
+3. Your flow should look like:
+   ```
+   [Schedule Trigger] → [HTTP Request to Railway] → [Process Jobs] → [Send Email]
+   ```
+
+### Step 3: Activate the Workflow ⚡ **MOST IMPORTANT**
+
+1. Look at the **top-right corner** of your workflow
+2. Find the toggle switch (currently says "Inactive")
+3. **Click to toggle it to "Active"**
+4. Confirm any prompts
+
+**When Active:**
+- ✅ Triggers will fire automatically
+- ✅ Workflow runs in background
+- ✅ No need to click "Execute"
+- ⚠️ The workflow must stay active for triggers to work
+
+### Step 4: Handle Multiple Users/Scenarios
+
+If you want to scrape jobs for **multiple users** or **different search terms**:
+
+**Method 1: Multiple Workflows** (Recommended)
+- Create one workflow per user/scenario
+- Each workflow has its own trigger schedule
+- Easy to manage individually
+
+**Method 2: Loop Through Users** (Advanced)
+1. Add a **"Set"** node with user data:
+   ```json
+   [
+     {"name": "User1", "search": "python developer", "location": "Mumbai"},
+     {"name": "User2", "search": "data analyst", "location": "Delhi"}
+   ]
+   ```
+2. Add a **"Loop Over Items"** node
+3. Each iteration calls the Railway API with different parameters
+
+### Step 5: Test Your Setup
+
+1. **Activate** the workflow
+2. **Wait** for the trigger to fire (or trigger manually for testing)
+3. **Check Executions**:
+   - Click "Executions" in the left sidebar
+   - See all past runs
+   - Debug any errors
+
+### Example: Daily Job Scraper
+
+**Workflow Setup:**
+```
+┌─────────────────┐
+│ Schedule Trigger│  (Every day at 9 AM)
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  HTTP Request   │  (Call Railway API)
+│  POST /job-search
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  Process Data   │  (Format jobs)
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│   Send Email    │  (SMTP to your email)
+└─────────────────┘
+```
+
+**Schedule Trigger Settings:**
+- Mode: "Interval"
+- Interval: 1 day
+- Hour: 9
+- Minute: 0
+
+### Common Scenarios
+
+**Scenario 1: Different Jobs for Different Times**
+```
+Workflow 1: Tech Jobs (9 AM daily)
+Workflow 2: Finance Jobs (2 PM daily)
+Workflow 3: Remote Jobs (6 PM daily)
+```
+
+**Scenario 2: Multiple Locations**
+```
+Single workflow with Set node:
+- User1: Python jobs in Mumbai
+- User2: Python jobs in Bangalore
+- User3: Python jobs in Delhi
+Then loop through each
+```
+
+### Monitoring Your Automated Workflows
 
 ```bash
-# Install PM2 (Process Manager)
-npm install -g pm2
-
-# Start n8n with PM2
-pm2 start n8n
-
-# Save the process list (auto-restart on reboot)
-pm2 save
-pm2 startup
-
-# Check status
+# Check if n8n is running
 pm2 list
 
-# Monitor logs
-pm2 monit
+# View n8n logs in real-time
+pm2 logs n8n
 
-# Stop n8n
-pm2 stop n8n
+# Check workflow executions in n8n dashboard
+# Go to: http://localhost:5678 → Executions
 ```
 
 ---
