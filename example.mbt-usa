@@ -1,0 +1,266 @@
+# =============================================
+# JOB SCRAPER CONFIG - MASTER IN BUSINESS TECHNOLOGY (USA)
+# =============================================
+# For: MS Business Technology, MIS, MSIT, Business Analytics graduates
+# Focus: USA job market
+
+# ===========================================
+# SEARCH PARAMETERS
+# ===========================================
+# Main search term - works on most sites
+# TIP: Use quotes for exact match, - to exclude words
+#
+# BUSINESS TECHNOLOGY SEARCH TERMS:
+#
+# 💼 Business Technology Analyst:
+#   - "business technology analyst"
+#   - "IT business analyst"
+#   - "technology business analyst"
+#   - "business systems analyst"
+#   - "technical business analyst"
+#
+# 📊 Business Intelligence / Analytics:
+#   - "business intelligence analyst"
+#   - "BI analyst"
+#   - "data analyst"
+#   - "analytics consultant"
+#   - "business analytics"
+#
+# 🔄 Digital Transformation:
+#   - "digital transformation analyst"
+#   - "digital strategist"
+#   - "digital consultant"
+#   - "technology transformation"
+#
+# 💻 IT Consulting:
+#   - "technology consultant"
+#   - "IT consultant"
+#   - "management technology consultant"
+#   - "ERP consultant"
+#   - "SAP consultant"
+#   - "Salesforce consultant"
+#
+# 📋 Product & Project Management:
+#   - "technical product manager"
+#   - "IT project manager"
+#   - "product analyst"
+#   - "scrum master"
+#   - "agile coach"
+#
+# 🏗️ Solutions & Architecture:
+#   - "solutions analyst"
+#   - "solutions consultant"
+#   - "pre-sales consultant"
+#   - "technical solutions"
+#
+# 🔐 IT Governance & Security:
+#   - "IT auditor"
+#   - "technology risk analyst"
+#   - "IT compliance analyst"
+#   - "cybersecurity analyst"
+#
+# 📈 Strategy & Operations:
+#   - "technology strategy analyst"
+#   - "IT operations analyst"
+#   - "business operations analyst"
+#   - "process improvement analyst"
+
+SEARCH_TERM=business technology analyst new grad entry level , internship
+
+# Location - Major US tech hubs
+# Options: New York, San Francisco, Seattle, Austin, Boston, Chicago, 
+#          Los Angeles, Denver, Atlanta, Dallas, Washington DC
+LOCATION=USA
+
+# ===========================================
+# GOOGLE JOBS SPECIFIC
+# ===========================================
+# Google needs exact syntax - search on google jobs in browser first,
+# apply filters, then copy the search text
+GOOGLE_SEARCH_TERM=business technology analyst entry level jobs in USA
+
+# ===========================================
+# JOB SITES
+# ===========================================
+# All available sites are automatically used and filtered by country:
+#   India: indeed, linkedin, glassdoor, google, naukri, internshala
+#   USA: indeed, linkedin, glassdoor, google, zip_recruiter
+#   Bangladesh: indeed, linkedin, glassdoor, google, bdjobs
+#   Middle East: indeed, linkedin, glassdoor, google, bayt
+# No configuration needed - sites are auto-selected based on location
+
+# ===========================================
+# SEARCH FILTERS
+# ===========================================
+# Results per site (hardcoded to 100 for maximum responses)
+# RESULTS_WANTED=100
+
+# Jobs posted within last X hours
+# For new grad roles, use longer timeframe
+HOURS_OLD=168
+
+# Country for Indeed & Glassdoor
+DEFAULT_COUNTRY=USA
+
+# ===========================================
+# JOB TYPE
+# ===========================================
+# Options: fulltime, parttime, internship, contract
+# Leave empty for all types
+# For new grads: leave empty to get both internships and full-time
+JOB_TYPE=
+
+# Remote only jobs (many tech jobs are remote/hybrid now)
+IS_REMOTE=false
+
+# ===========================================
+# ADVANCED OPTIONS (HARDCODED)
+# ===========================================
+# These are now hardcoded in the script for optimal performance:
+# - DISTANCE: 50 miles
+# - VERBOSE: 1 (detailed output)
+# - LINKEDIN_FETCH_DESCRIPTION: true (full job descriptions)
+
+
+# =============================================
+# READY-TO-USE CONFIGS BY ROLE TYPE
+# =============================================
+# Copy the relevant lines and replace the values above
+#
+# ────────────────────────────────────────────
+# 💼 BUSINESS/TECHNOLOGY ANALYST
+# ────────────────────────────────────────────
+# SEARCH_TERM="business technology analyst" OR "IT business analyst" entry level
+# GOOGLE_SEARCH_TERM=business technology analyst entry level jobs in USA
+#
+# ────────────────────────────────────────────
+# 📊 BUSINESS INTELLIGENCE ANALYST
+# ────────────────────────────────────────────
+# SEARCH_TERM="business intelligence analyst" OR "BI analyst" new grad
+# GOOGLE_SEARCH_TERM=business intelligence analyst entry level jobs in USA
+#
+# ────────────────────────────────────────────
+# 📈 DATA ANALYST (Business Focus)
+# ────────────────────────────────────────────
+# SEARCH_TERM="data analyst" business SQL Python entry level
+# GOOGLE_SEARCH_TERM=data analyst entry level jobs in USA
+#
+# ────────────────────────────────────────────
+# 💻 TECHNOLOGY CONSULTANT
+# ────────────────────────────────────────────
+# SEARCH_TERM="technology consultant" OR "IT consultant" analyst
+# GOOGLE_SEARCH_TERM=technology consultant entry level jobs in USA
+#
+# ────────────────────────────────────────────
+# 📋 TECHNICAL PRODUCT MANAGER
+# ────────────────────────────────────────────
+# SEARCH_TERM="associate product manager" OR "product analyst" tech
+# GOOGLE_SEARCH_TERM=associate product manager tech jobs in USA
+#
+# ────────────────────────────────────────────
+# 🔄 DIGITAL TRANSFORMATION
+# ────────────────────────────────────────────
+# SEARCH_TERM="digital transformation" analyst consultant entry level
+# GOOGLE_SEARCH_TERM=digital transformation analyst jobs in USA
+#
+# ────────────────────────────────────────────
+# 🏗️ SOLUTIONS ANALYST/CONSULTANT
+# ────────────────────────────────────────────
+# SEARCH_TERM="solutions analyst" OR "solutions consultant" entry level
+# GOOGLE_SEARCH_TERM=solutions analyst entry level jobs in USA
+#
+# ────────────────────────────────────────────
+# 🔐 IT AUDIT / GRC
+# ────────────────────────────────────────────
+# SEARCH_TERM="IT auditor" OR "technology risk" analyst entry level
+# GOOGLE_SEARCH_TERM=IT auditor entry level jobs in USA
+#
+# ────────────────────────────────────────────
+# ☁️ CLOUD / ERP CONSULTANT
+# ────────────────────────────────────────────
+# SEARCH_TERM="SAP consultant" OR "Salesforce consultant" OR "cloud consultant" junior
+# GOOGLE_SEARCH_TERM=ERP consultant entry level jobs in USA
+
+
+# =============================================
+# TOP US CITIES FOR BUSINESS TECHNOLOGY JOBS
+# =============================================
+# Change LOCATION to any of these:
+#
+# 🏙️ Tech Hubs:
+#   - San Francisco, CA (Silicon Valley)
+#   - Seattle, WA (Amazon, Microsoft)
+#   - Austin, TX (Growing tech scene)
+#   - New York, NY (Finance + Tech)
+#   - Boston, MA (Biotech + Finance)
+#
+# 💼 Business/Consulting Hubs:
+#   - Chicago, IL (Consulting firms)
+#   - Dallas, TX (Corporate HQs)
+#   - Atlanta, GA (Fortune 500s)
+#   - Washington, DC (Government + Consulting)
+#   - Denver, CO (Tech + Startups)
+#
+# 🏠 Remote-Friendly:
+#   - LOCATION=Remote
+#   - IS_REMOTE=true
+
+
+# =============================================
+# TOP COMPANIES FOR BUSINESS TECHNOLOGY (USA)
+# =============================================
+# Add company name to search term for targeted search:
+#
+# 🏢 Big Tech (FAANG+):
+#   Google, Amazon, Microsoft, Apple, Meta, Netflix, Salesforce, Oracle, IBM
+#
+# 💼 Consulting (Big 4 + MBB):
+#   Deloitte, PwC, EY, KPMG, McKinsey, BCG, Bain, Accenture, Capgemini
+#
+# 🏦 Finance/Banking:
+#   JPMorgan, Goldman Sachs, Morgan Stanley, Bank of America, Citi, Wells Fargo
+#
+# 🛒 E-commerce/Retail:
+#   Amazon, Walmart, Target, Costco, Home Depot, Best Buy
+#
+# 💊 Healthcare/Pharma:
+#   UnitedHealth, CVS, Pfizer, Johnson & Johnson, Abbott
+#
+# 🚗 Automotive/Manufacturing:
+#   Tesla, Ford, GM, Boeing, Caterpillar, 3M
+#
+# Example: SEARCH_TERM="Deloitte" technology consultant analyst
+
+
+# =============================================
+# VISA SPONSORSHIP TIPS (FOR INTERNATIONAL STUDENTS)
+# =============================================
+# Many companies sponsor H1B visas. To find visa-friendly jobs:
+#
+# 1. Add "visa sponsorship" to search:
+#    SEARCH_TERM=business analyst "visa sponsorship" entry level
+#
+# 2. Target large companies (more likely to sponsor)
+#
+# 3. Focus on cities with high H1B approvals:
+#    - San Francisco, CA
+#    - New York, NY
+#    - Seattle, WA
+#    - Chicago, IL
+#
+# 4. Use job boards that filter by sponsorship:
+#    - myvisajobs.com
+#    - h1bdata.info (research companies)
+
+
+# =============================================
+# CERTIFICATIONS TO BOOST YOUR PROFILE
+# =============================================
+# Add these to your search for relevant roles:
+#
+# 📊 Analytics: Tableau, Power BI, Google Analytics
+# ☁️ Cloud: AWS, Azure, GCP certifications
+# 📋 Project Management: PMP, Scrum Master, CAPM
+# 🔐 Security: CISA, CISSP, CompTIA Security+
+# 💼 Business: Six Sigma, CBAP
+# 🔧 Tech Specific: SAP, Salesforce, ServiceNow

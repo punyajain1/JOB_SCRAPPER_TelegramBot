@@ -1,0 +1,1691 @@
+{
+  "name": "Job Application Automator",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "*"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        672,
+        -1376
+      ],
+      "id": "ecf70572-f520-4353-945d-3d7dc1001e47",
+      "name": "Telegram Trigger",
+      "webhookId": "e470a075-d507-4fdb-948c-33d9f7a9ae3c",
+      "credentials": {
+        "telegramApi": {
+          "id": "1aiJwkx7cBZgeGxC",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger1').item.json.callback_query.message.chat.id }}",
+        "text": "=👋 Welcome {{ $json.callback_query.from.first_name }}!\n\nI'm your Job Search Assistant 🤖. I help you automate your hunt by saving your preferences and running custom scrapers.\n\n━━━ 🛠️ HOW TO CONFIGURE ━━━\n\nI use an incremental setup. When you trigger a search, I check if I already know your preferences.\n\n🔹 New Users: I will ask for your search term, location, and job type step-by-step. 🔹 Existing Users: You can choose to Update your settings or Run the search immediately.\n\n━━━ 🎓 THE \"ANY ORDER\" ENGINE ━━━\n\nWhether you are in Tech, Finance, or Management, just send your details in any order. My AI detects your field and fills in the blanks for you!\n\n━━━ ⚙️ WHAT HAPPENS NEXT? ━━━\n\nOnce your data is saved: 1️⃣ Scraping: I scan LinkedIn, Indeed, Naukri, and more. 2️⃣ Delivery: You'll receive a custom CSV with all job openings.\n\n🔗 Connect with me on LinkedIn -- https://www.linkedin.com/in/punya-jain-40ab8b2a6/",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "🚀 Start Job Search",
+                    "additionalFields": {
+                      "callback_data": "search"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "parse_mode": "Markdown"
+        }
+      },
+      "id": "e511bf3c-6a3f-4ffc-9d10-d3b2ddeb3ba4",
+      "name": "Send Help Message",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1680,
+        -1232
+      ],
+      "webhookId": "ce50e657-2724-4211-9c0d-1d37dbfe48d6",
+      "credentials": {
+        "telegramApi": {
+          "id": "1aiJwkx7cBZgeGxC",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "=Welcome {{ $json.message.from.first_name }}! 👋  I can help you with the following:  \n🔍 Search - Find job listings(use appropriate tamplet) \n❓ Help - Get assistance  Please select an option below:\n\nBuilt with ❤️ by Punya 😎\n",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "🔍 Search",
+                    "additionalFields": {
+                      "callback_data": "search"
+                    }
+                  },
+                  {
+                    "text": "❓ Help",
+                    "additionalFields": {
+                      "callback_data": "help"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        880,
+        -1376
+      ],
+      "id": "37f6ab8e-edbc-43d3-bb9c-146a49e41104",
+      "name": "Send a text message1",
+      "webhookId": "b3ef46f2-7d9a-41b8-a74f-0f618de77ce4",
+      "credentials": {
+        "telegramApi": {
+          "id": "1aiJwkx7cBZgeGxC",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "*"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        1184,
+        -1376
+      ],
+      "id": "e09573ec-96ec-43ca-b43c-3920c7f1a79c",
+      "name": "Telegram Trigger1",
+      "webhookId": "6d57e409-2a41-407a-aea2-7ef3c1ec6cfd",
+      "credentials": {
+        "telegramApi": {
+          "id": "1aiJwkx7cBZgeGxC",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "table",
+        "operation": "create",
+        "tableName": "USER_PREFRENCE",
+        "columns": {
+          "column": [
+            {
+              "name": "user_id"
+            },
+            {
+              "name": "search_term"
+            },
+            {
+              "name": "location"
+            },
+            {
+              "name": "google_search_term"
+            },
+            {
+              "name": "default_country"
+            },
+            {
+              "name": "job_type"
+            },
+            {
+              "name": "is_remote",
+              "type": "boolean"
+            },
+            {
+              "name": "internshala_search_term"
+            },
+            {
+              "name": "updated_at"
+            },
+            {
+              "name": "hours_old",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        4208,
+        -1088
+      ],
+      "id": "c01ea6d1-4408-44ae-9c0b-3bfb49aee1d1",
+      "name": "Create a data table"
+    },
+    {
+      "parameters": {
+        "operation": "rowExists",
+        "dataTableId": {
+          "__rl": true,
+          "value": "8n2FZPa6z2Te1t0m",
+          "mode": "list",
+          "cachedResultName": "USER_PREFRENCE",
+          "cachedResultUrl": "/projects/Lq1iBNCAtSoU0n0F/datatables/8n2FZPa6z2Te1t0m"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "user_id",
+              "keyValue": "={{ $json.callback_query.from.id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        2272,
+        -2512
+      ],
+      "id": "1253573e-0462-4acd-8fc8-51b372037e44",
+      "name": "If row exists",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "operation": "rowNotExists",
+        "dataTableId": {
+          "__rl": true,
+          "value": "8n2FZPa6z2Te1t0m",
+          "mode": "list",
+          "cachedResultName": "USER_PREFRENCE",
+          "cachedResultUrl": "/projects/Lq1iBNCAtSoU0n0F/datatables/8n2FZPa6z2Te1t0m"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "user_id",
+              "keyValue": "={{ $json.callback_query.from.id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        2320,
+        -2272
+      ],
+      "id": "948cf5c4-e20e-4f5a-a301-55d3b45bcdd3",
+      "name": "If row does not exist"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "={{ $('Telegram Trigger1').item.json.callback_query.message.chat.id }}",
+        "message": "Fill The Provided Form with you preferred choice (make sure to maintain the order)",
+        "responseType": "customForm",
+        "defineForm": "json",
+        "jsonOutput": "[\n  {\n    \"fieldLabel\": \"Search Term\",\n    \"placeholder\": \"e.g. software intern ,etc(For-BTech) / finance intern , etc(For-BCom) / MBA HR intern,etc (For-MBA)\",\n    \"requiredField\": true\n  },\n  {\n    \"fieldLabel\": \"Location\",\n    \"placeholder\": \"e.g. India, Mumbai, or Remote\",\n    \"requiredField\": true\n  },\n  {\n    \"fieldLabel\": \"Google Search Term\",\n    \"placeholder\": \"e.g. software developer intern jobs in India\",\n    \"requiredField\": true\n  },\n  {\n    \"fieldLabel\": \"Hours Old\",\n    \"fieldType\": \"number\",\n    \"placeholder\": \"e.g. 72, 48, or 24\",\n    \"requiredField\": true\n  },\n  {\n    \"fieldLabel\": \"Default Country\",\n    \"placeholder\": \"e.g. India\",\n    \"requiredField\": true\n  },\n  {\n    \"fieldLabel\": \"Job Type\",\n    \"fieldType\": \"dropdown\",\n    \"fieldOptions\": {\n      \"values\": [\n        { \"option\": \"internship\" },\n        { \"option\": \"fulltime\" },\n        { \"option\": \"parttime\" },\n        { \"option\": \"contract\" },\n        { \"option\": \"all\" }\n      ]\n    },\n    \"requiredField\": false\n  },\n  {\n    \"fieldLabel\": \"Is Remote\",\n    \"fieldType\": \"radio\",\n    \"fieldOptions\": {\n      \"values\": [\n        { \"option\": \"true\" },\n        { \"option\": \"false\" }\n      ]\n    },\n    \"requiredField\": true\n  },\n  {\n    \"fieldLabel\": \"Internshala Search Term\",\n    \"placeholder\": \"e.g. software-development or human-resources\",\n    \"requiredField\": false\n  }\n]",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2624,
+        -2272
+      ],
+      "id": "262b86a9-c9e5-4177-8052-6cb922cb3650",
+      "name": "Send message and wait for response first_message",
+      "webhookId": "f6be1a79-e1b9-49c3-80b8-da2223b82614",
+      "credentials": {
+        "telegramApi": {
+          "id": "1aiJwkx7cBZgeGxC",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "={{ $('Telegram Trigger1').item.json.callback_query.message.chat.id }}",
+        "message": "=Do you want to update data or use the previous one ?\nSearchTerm =  {{ $json.search_term }}\nLocation = {{ $json.location }}\nGogle Search = {{ $json.google_search_term }}\nJob Type = {{ $json.job_type === \"\" ? \"\" : $json.data['Job Type'] }}\nRemote = {{ $json.is_remote }}\nInternshala Search = {{ $json.internshala_search_term }}\nHours Old = {{ $json.hours_old }}",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double",
+            "approveLabel": "✅update data",
+            "disapproveLabel": "❌use old data"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2640,
+        -2512
+      ],
+      "id": "450c26f8-03ce-41d9-bf37-5f5b15669003",
+      "name": "Send message and wait for response",
+      "webhookId": "387b565b-5e08-4013-a3df-86c0f5fe5a40",
+      "credentials": {
+        "telegramApi": {
+          "id": "1aiJwkx7cBZgeGxC",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "4b4c923a-99e9-4922-8190-c83d76baaf8d",
+              "leftValue": "={{ $json.data.approved }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2864,
+        -2512
+      ],
+      "id": "6d5aadae-28f7-40ab-9d71-bc55ad4820eb",
+      "name": "IF user want to change the data"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "dataTableId": {
+          "__rl": true,
+          "value": "8n2FZPa6z2Te1t0m",
+          "mode": "list",
+          "cachedResultName": "USER_PREFRENCE",
+          "cachedResultUrl": "/projects/Lq1iBNCAtSoU0n0F/datatables/8n2FZPa6z2Te1t0m"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "user_id",
+              "keyValue": "={{ $('Telegram Trigger1').item.json.callback_query.from.id }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "is_remote": "={{ $json.data['Is Remote'] === \"true\" ? true : false }}",
+            "user_id": "={{ $('Telegram Trigger1').item.json.callback_query.from.id }}",
+            "hours_old": "={{ $json.data['Hours Old'] }}",
+            "search_term": "={{ $json.data['Search Term'] }}",
+            "location": "={{ $json.data.Location.toLowerCase() }}",
+            "google_search_term": "={{ $json.data['Google Search Term'].toLowerCase() }}",
+            "default_country": "={{ $json.data['Default Country'] }}",
+            "job_type": "={{ $json.data['Job Type'] === \"all\" ? \"\" : $json.data['Job Type'] }}",
+            "internshala_search_term": "={{ $json.data['Internshala Search Term'] }}",
+            "updated_at": "={{ $now.toISO() }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "user_id",
+              "displayName": "user_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "search_term",
+              "displayName": "search_term",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "google_search_term",
+              "displayName": "google_search_term",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "default_country",
+              "displayName": "default_country",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "job_type",
+              "displayName": "job_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "is_remote",
+              "displayName": "is_remote",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "internshala_search_term",
+              "displayName": "internshala_search_term",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "hours_old",
+              "displayName": "hours_old",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        2784,
+        -2272
+      ],
+      "id": "e143d03b-df02-4c36-b1fb-999f9e3ac916",
+      "name": "Upsert row(s)1"
+    },
+    {
+      "parameters": {
+        "resource": "table",
+        "operation": "delete",
+        "dataTableId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "s8quukRnBNjgcBzu"
+        }
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        4000,
+        -1088
+      ],
+      "id": "21d29b3d-1f25-4f00-a769-83edc48eed66",
+      "name": "Delete a data table"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "8n2FZPa6z2Te1t0m",
+          "mode": "list",
+          "cachedResultName": "USER_PREFRENCE",
+          "cachedResultUrl": "/projects/Lq1iBNCAtSoU0n0F/datatables/8n2FZPa6z2Te1t0m"
+        },
+        "matchType": "allConditions",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "user_id",
+              "keyValue": "={{ $('Telegram Trigger1').item.json.callback_query.message.chat.id }}"
+            }
+          ]
+        },
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        2464,
+        -2512
+      ],
+      "id": "7519defb-5ceb-430c-a104-403e5f39b0a7",
+      "name": "Get row(s)"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "8n2FZPa6z2Te1t0m",
+          "mode": "list",
+          "cachedResultName": "USER_PREFRENCE",
+          "cachedResultUrl": "/projects/Lq1iBNCAtSoU0n0F/datatables/8n2FZPa6z2Te1t0m"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "user_id",
+              "keyValue": "={{ $('Telegram Trigger1').item.json.callback_query.message.chat.id }}"
+            }
+          ]
+        },
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.dataTable",
+      "typeVersion": 1.1,
+      "position": [
+        3152,
+        -2416
+      ],
+      "id": "9286665f-52ad-4c41-9eab-848c3ecadfd0",
+      "name": "Get row(s)1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nif (items.length === 0) return { json: { total_matches: 0 } };\n\n// Define column order to match your required format\nconst orderedColumns = [\n  'id', 'site', 'job_url', 'job_url_direct', 'title', 'company', 'location',\n  'date_posted', 'job_type', 'salary_source', 'interval', 'min_amount',\n  'max_amount', 'currency', 'is_remote', 'job_level', 'job_function',\n  'listing_type', 'emails', 'description', 'company_industry', 'company_url',\n  'company_logo', 'company_url_direct', 'company_addresses', 'company_num_employees',\n  'company_revenue', 'company_description', 'skills', 'experience_range',\n  'company_rating', 'company_reviews_count', 'vacancy_count', 'work_from_home_type'\n];\n\n// Collect any extra columns not in the predefined list\nconst allKeys = new Set(orderedColumns);\nitems.forEach(item => {\n  Object.keys(item.json).forEach(key => allKeys.add(key));\n});\nconst headers = Array.from(allKeys);\n\n// Create CSV String\nlet csvString = headers.join(\",\") + \"\\n\";\nitems.forEach(item => {\n  const row = headers.map(header => {\n    let value = item.json[header];\n    // Handle arrays (like skills might be an array)\n    if (Array.isArray(value)) value = value.join(\"; \");\n    else if (value && typeof value === 'object') value = JSON.stringify(value);\n    \n    const cleanValue = (value === null || value === undefined) \n      ? \"\" \n      : String(value).replace(/\"/g, '\"\"').replace(/\\n/g, \" \").replace(/\\r/g, \"\");\n    return `\"${cleanValue}\"`;\n  });\n  csvString += row.join(\",\") + \"\\n\";\n});\n\n// Return Binary File\nreturn {\n  json: {\n    total_matches: items.length,\n    fileName: `Job_Matches_${new Date().toISOString().split('T')[0]}.csv`,\n    chat_id: $('Telegram Trigger1').first().json.callback_query.message.chat.id\n  },\n  binary: {\n    data: {\n      data: Buffer.from(csvString).toString('base64'),\n      mimeType: 'text/csv',\n      fileName: `Job_Matches_${new Date().toISOString().split('T')[0]}.csv`\n    }\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4000,
+        -2416
+      ],
+      "id": "ff9c466a-ddc5-416a-9f79-05b7cff06ebd",
+      "name": "Code in JavaScript2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get the first item's JSON from the input\nconst payload = $input.first().json;\n\n// 2. Extract the jobs array (defaults to empty array if missing)\nconst jobs = payload.jobs || [];\n\n// 3. Return each job as a separate n8n item with search metadata\nreturn jobs.map(job => ({\n  json: {\n    ...job,\n    search_metadata: {\n      search_term: payload.search_term,\n      location: payload.location,\n      timestamp: payload.timestamp,\n      backup_file: payload.backup_file,\n      sites_searched: payload.sites_searched\n    }\n  }\n}));"
+      },
+      "id": "a16da340-9832-418d-a3f6-e8e9c18b100b",
+      "name": "Extract Jobs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3744,
+        -2416
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "fromEmail": "n8nworkflow@zohomail.in",
+        "toEmail": "23cse154punyajain@gmail.com",
+        "subject": "=🎯 Found {{ $node[\"Code in JavaScript2\"].json.total_matches }} Job Matches!",
+        "html": "=Attached is your daily job match report generated on {{ $now.format('YYYY-MM-DD') }}.",
+        "options": {
+          "attachments": "data"
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        4832,
+        -1216
+      ],
+      "id": "b65f5739-261d-496e-8c13-fa5b627b6d7a",
+      "name": "Send email",
+      "webhookId": "7c6ab51b-7a85-4cf3-8f11-2664efbb89e7",
+      "credentials": {
+        "smtp": {
+          "id": "l4hoCMKvvspFX1gA",
+          "name": "SMTP account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://f9843a6e36cb.ngrok-free.app/job-search",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "SEARCH_TERM",
+              "value": "={{ $json.search_term }}"
+            },
+            {
+              "name": "LOCATION",
+              "value": "={{ $json.location }}"
+            },
+            {
+              "name": "GOOGLE_SEARCH_TERM",
+              "value": "={{ $json.google_search_term }}"
+            },
+            {
+              "name": "HOURS_OLD",
+              "value": "={{ $json.hours_old }}"
+            },
+            {
+              "name": "DEFAULT_COUNTRY",
+              "value": "={{ $json.default_country }}"
+            },
+            {
+              "name": "JOB_TYPE",
+              "value": "={{ $json.job_type }}"
+            },
+            {
+              "name": "IS_REMOTE",
+              "value": "={{ $json.is_remote }}"
+            },
+            {
+              "name": "INTERNSHALA_SEARCH_TERM",
+              "value": "={{ $json.internshala_search_term }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3472,
+        -2416
+      ],
+      "id": "76a0f10d-e94b-42e7-87b9-44fd0a85c3e8",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "operation": "sendDocument",
+        "chatId": "={{ $json.chat_id }}",
+        "binaryData": true,
+        "additionalFields": {
+          "caption": "=✨ Search Results are in! Total Jobs Found: {{ $json.total_matches }} 🎯\n\nGood luck with your applications! May your next big opportunity be in this list. 🚀🚀\n\nBuild by Pune 🛠️"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4288,
+        -2416
+      ],
+      "id": "b20a5be6-68a8-4546-9eec-04e38aa937b4",
+      "name": "Send a document",
+      "webhookId": "b9eeb704-e4ab-4032-954a-c7555efe32f0",
+      "credentials": {
+        "telegramApi": {
+          "id": "1aiJwkx7cBZgeGxC",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "job_search_preferences",
+          "mode": "list",
+          "cachedResultName": "job_search_preferences"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "user_id",
+              "value": "={{ $('Telegram Trigger1').item.json.callback_query.message.chat.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2624,
+        -1600
+      ],
+      "id": "09433daa-6701-4aae-988b-9160a8891b02",
+      "name": "Select rows from a table",
+      "credentials": {
+        "postgres": {
+          "id": "NrxsAzE7LBfgEQrp",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT EXISTS (\n  SELECT 1 \n  FROM job_search_preferences \n  WHERE user_id = {{ $json.message?.chat?.id || $json.result.chat.id }}\n);",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2064,
+        -1392
+      ],
+      "id": "d4aba1e1-b3cf-4a74-bc16-6e2d32d1abe9",
+      "name": "Execute a SQL query",
+      "credentials": {
+        "postgres": {
+          "id": "NrxsAzE7LBfgEQrp",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.exists }}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "equals"
+                    },
+                    "id": "b46467ab-f3ac-4673-ad33-7d298f59cb4e"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Data exist"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "2c72b4e8-ede2-41a4-ba96-62ba8bb916fa",
+                    "leftValue": "={{ $json.exists }}",
+                    "rightValue": false,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Data not exist"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        2320,
+        -1392
+      ],
+      "id": "3223ba7a-6db9-4618-85d2-f90410025261",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "={{ $('Telegram Trigger1').item.json.callback_query.message.chat.id }}",
+        "message": "Fill The Provided Form with you preferred choice (make sure to maintain the order)",
+        "responseType": "customForm",
+        "defineForm": "json",
+        "jsonOutput": "[\n  {\n    \"fieldLabel\": \"Search Term\",\n    \"placeholder\": \"e.g. software intern ,etc(For-BTech) / finance intern , etc(For-BCom) / MBA HR intern,etc (For-MBA)\",\n    \"requiredField\": true\n  },\n  {\n    \"fieldLabel\": \"Location\",\n    \"placeholder\": \"e.g. India, Mumbai, or Remote\",\n    \"requiredField\": true\n  },\n  {\n    \"fieldLabel\": \"Google Search Term\",\n    \"placeholder\": \"e.g. software developer intern jobs in India\",\n    \"requiredField\": true\n  },\n  {\n    \"fieldLabel\": \"Hours Old\",\n    \"fieldType\": \"number\",\n    \"placeholder\": \"e.g. 72, 48, or 24\",\n    \"requiredField\": true\n  },\n  {\n    \"fieldLabel\": \"Default Country\",\n    \"placeholder\": \"e.g. India\",\n    \"requiredField\": true\n  },\n  {\n    \"fieldLabel\": \"Job Type\",\n    \"fieldType\": \"dropdown\",\n    \"fieldOptions\": {\n      \"values\": [\n        { \"option\": \"internship\" },\n        { \"option\": \"fulltime\" },\n        { \"option\": \"parttime\" },\n        { \"option\": \"contract\" },\n        { \"option\": \"all\" }\n      ]\n    },\n    \"requiredField\": false\n  },\n  {\n    \"fieldLabel\": \"Is Remote\",\n    \"fieldType\": \"radio\",\n    \"fieldOptions\": {\n      \"values\": [\n        { \"option\": \"true\" },\n        { \"option\": \"false\" }\n      ]\n    },\n    \"requiredField\": true\n  },\n  {\n    \"fieldLabel\": \"Internshala Search Term\",\n    \"placeholder\": \"e.g. software-development or human-resources\",\n    \"requiredField\": false\n  }\n]",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2800,
+        -1184
+      ],
+      "id": "e5a1720e-2a05-4224-a64c-0b49c326465c",
+      "name": "Send message and wait for response first_message1",
+      "webhookId": "f6be1a79-e1b9-49c3-80b8-da2223b82614",
+      "credentials": {
+        "telegramApi": {
+          "id": "1aiJwkx7cBZgeGxC",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "={{ $('Telegram Trigger1').item.json.callback_query.message.chat.id }}",
+        "message": "=Do you want to update data or use the previous one ?\nSearchTerm =  {{ $json.search_term }}\nLocation = {{ $json.location }}\nGogle Search = {{ $json.google_search_term }}\nJob Type = {{ $json.job_type === \"\" ? \"\" : $json.data['Job Type'] }}\nRemote = {{ $json.is_remote }}\nInternshala Search = {{ $json.internshala_search_term }}\nHours Old = {{ $json.hours_old }}",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double",
+            "approveLabel": "✅update data",
+            "disapproveLabel": "❌use old data"
+          }
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2864,
+        -1600
+      ],
+      "id": "71372c3e-6e2c-47c4-9027-8b3e0a60985e",
+      "name": "Send message and wait for response1",
+      "webhookId": "387b565b-5e08-4013-a3df-86c0f5fe5a40",
+      "credentials": {
+        "telegramApi": {
+          "id": "1aiJwkx7cBZgeGxC",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "4b4c923a-99e9-4922-8190-c83d76baaf8d",
+              "leftValue": "={{ $json.data.approved }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3088,
+        -1600
+      ],
+      "id": "bb36b759-5139-4ff2-a29e-1ed740c02002",
+      "name": "IF user want to change the data1"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "job_search_preferences",
+          "mode": "list",
+          "cachedResultName": "job_search_preferences"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "is_remote": "={{ $json.data['Is Remote'] }}",
+            "hours_old": "={{ $json.data['Hours Old'] }}",
+            "updated_at": "={{ $now.toISO() }}",
+            "user_id": "={{ $('Telegram Trigger1').item.json.callback_query.message.chat.id }}",
+            "search_term": "={{ $json.data['Search Term'] }}",
+            "location": "={{ $json.data.Location }}",
+            "google_search_term": "={{ $json.data['Google Search Term'] }}",
+            "default_country": "={{ $json.data['Default Country'] }}",
+            "job_type": "={{ $json.data['Job Type'] }}",
+            "internshala_search_term": "={{ $json.data['Internshala Search Term'] }}"
+          },
+          "matchingColumns": [
+            "user_id"
+          ],
+          "schema": [
+            {
+              "id": "user_id",
+              "displayName": "user_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "search_term",
+              "displayName": "search_term",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "location",
+              "displayName": "location",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "google_search_term",
+              "displayName": "google_search_term",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "default_country",
+              "displayName": "default_country",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "job_type",
+              "displayName": "job_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "is_remote",
+              "displayName": "is_remote",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "boolean",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "internshala_search_term",
+              "displayName": "internshala_search_term",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "hours_old",
+              "displayName": "hours_old",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "updated_at",
+              "displayName": "updated_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        3040,
+        -1184
+      ],
+      "id": "fd73442a-956e-4420-b48e-a39cddba34d4",
+      "name": "Insert or update rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "NrxsAzE7LBfgEQrp",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "value": "job_search_preferences",
+          "mode": "list",
+          "cachedResultName": "job_search_preferences"
+        },
+        "returnAll": true,
+        "where": {
+          "values": [
+            {
+              "column": "user_id",
+              "value": "={{ $('Telegram Trigger1').item.json.callback_query.message.chat.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        3360,
+        -1424
+      ],
+      "id": "99972a1d-cce6-47d4-a191-d54ab5fed77f",
+      "name": "Select rows from a table1",
+      "credentials": {
+        "postgres": {
+          "id": "NrxsAzE7LBfgEQrp",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nif (items.length === 0) return { json: { total_matches: 0 } };\n\n// Define column order to match your required format\nconst orderedColumns = [\n  'id', 'site', 'job_url', 'job_url_direct', 'title', 'company', 'location',\n  'date_posted', 'job_type', 'salary_source', 'interval', 'min_amount',\n  'max_amount', 'currency', 'is_remote', 'job_level', 'job_function',\n  'listing_type', 'emails', 'description', 'company_industry', 'company_url',\n  'company_logo', 'company_url_direct', 'company_addresses', 'company_num_employees',\n  'company_revenue', 'company_description', 'skills', 'experience_range',\n  'company_rating', 'company_reviews_count', 'vacancy_count', 'work_from_home_type'\n];\n\n// Collect any extra columns not in the predefined list\nconst allKeys = new Set(orderedColumns);\nitems.forEach(item => {\n  Object.keys(item.json).forEach(key => allKeys.add(key));\n});\nconst headers = Array.from(allKeys);\n\n// Create CSV String\nlet csvString = headers.join(\",\") + \"\\n\";\nitems.forEach(item => {\n  const row = headers.map(header => {\n    let value = item.json[header];\n    // Handle arrays (like skills might be an array)\n    if (Array.isArray(value)) value = value.join(\"; \");\n    else if (value && typeof value === 'object') value = JSON.stringify(value);\n    \n    const cleanValue = (value === null || value === undefined) \n      ? \"\" \n      : String(value).replace(/\"/g, '\"\"').replace(/\\n/g, \" \").replace(/\\r/g, \"\");\n    return `\"${cleanValue}\"`;\n  });\n  csvString += row.join(\",\") + \"\\n\";\n});\n\n// Return Binary File\nreturn {\n  json: {\n    total_matches: items.length,\n    fileName: `Job_Matches_${new Date().toISOString().split('T')[0]}.csv`,\n    chat_id: $('Telegram Trigger1').first().json.callback_query.message.chat.id\n  },\n  binary: {\n    data: {\n      data: Buffer.from(csvString).toString('base64'),\n      mimeType: 'text/csv',\n      fileName: `Job_Matches_${new Date().toISOString().split('T')[0]}.csv`\n    }\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4144,
+        -1424
+      ],
+      "id": "caca796d-0f7d-4d14-a459-ece0fda2e428",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get the first item's JSON from the input\nconst payload = $input.first().json;\n\n// 2. Extract the jobs array (defaults to empty array if missing)\nconst jobs = payload.jobs || [];\n\n// 3. Return each job as a separate n8n item with search metadata\nreturn jobs.map(job => ({\n  json: {\n    ...job,\n    search_metadata: {\n      search_term: payload.search_term,\n      location: payload.location,\n      timestamp: payload.timestamp,\n      backup_file: payload.backup_file,\n      sites_searched: payload.sites_searched\n    }\n  }\n}));"
+      },
+      "id": "3c25b437-2c09-4a05-a470-6fff8134c4da",
+      "name": "Extract Jobs1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3888,
+        -1424
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://8a86-122-162-148-168.ngrok-free.app/job-search",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "SEARCH_TERM",
+              "value": "={{ $json.search_term }}"
+            },
+            {
+              "name": "LOCATION",
+              "value": "={{ $json.location }}"
+            },
+            {
+              "name": "GOOGLE_SEARCH_TERM",
+              "value": "={{ $json.google_search_term }}"
+            },
+            {
+              "name": "HOURS_OLD",
+              "value": "={{ $json.hours_old }}"
+            },
+            {
+              "name": "DEFAULT_COUNTRY",
+              "value": "={{ $json.default_country }}"
+            },
+            {
+              "name": "JOB_TYPE",
+              "value": "={{ $json.job_type }}"
+            },
+            {
+              "name": "IS_REMOTE",
+              "value": "={{ $json.is_remote }}"
+            },
+            {
+              "name": "INTERNSHALA_SEARCH_TERM",
+              "value": "={{ $json.internshala_search_term }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3616,
+        -1424
+      ],
+      "id": "dd2be80e-84bf-4d46-bfdc-daefa945b191",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "operation": "sendDocument",
+        "chatId": "={{ $json.chat_id }}",
+        "binaryData": true,
+        "additionalFields": {
+          "caption": "=✨ Search Results are in! Total Jobs Found: {{ $json.total_matches }} 🎯\n\nGood luck with your applications! May your next big opportunity be in this list. 🚀🚀\n\nBuild by Pune 🛠️"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        4432,
+        -1424
+      ],
+      "id": "2029164a-97f7-482c-8635-86b5cba6dd3a",
+      "name": "Send a document1",
+      "webhookId": "b9eeb704-e4ab-4032-954a-c7555efe32f0",
+      "credentials": {
+        "telegramApi": {
+          "id": "1aiJwkx7cBZgeGxC",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "70d21a43-48de-4934-9619-19e9a71d5a7e",
+              "leftValue": "={{ $json.result.reply_markup.inline_keyboard[0][0].callback_data }}",
+              "rightValue": "search",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1888,
+        -1232
+      ],
+      "id": "3710a098-41fb-4e36-bc47-78285b42fb50",
+      "name": "If select search after help"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.callback_query.data }}",
+                    "rightValue": "search",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "3bf9ff0c-9fec-4869-bc90-466b29e1b871"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Search"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "45626506-69f9-49f6-9b55-ab0ea5b7658f",
+                    "leftValue": "={{ $json.callback_query.data }}",
+                    "rightValue": "help",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Herlp"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1456,
+        -1376
+      ],
+      "id": "0e9b8980-8a4e-464c-8431-d3cd1dc001cb",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "content": "## OLD WORKFLOW\n**Without SQL_DB**",
+        "height": 112,
+        "width": 272,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1984,
+        -2368
+      ],
+      "typeVersion": 1,
+      "id": "06ea9070-12bf-418f-ab6b-c8a728bbaab0",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## I'm Send to Email  \n**Instead of using the telegram you can get the csv file on email**\n\nyou have to set up an smtp mail\n"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        4816,
+        -1072
+      ],
+      "typeVersion": 1,
+      "id": "91bfa73c-f259-4c8e-8f81-259d1d02eed2",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message1": {
+      "main": [
+        []
+      ]
+    },
+    "Telegram Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a data table": {
+      "main": [
+        []
+      ]
+    },
+    "If row exists": {
+      "main": [
+        [
+          {
+            "node": "Get row(s)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If row does not exist": {
+      "main": [
+        [
+          {
+            "node": "Send message and wait for response first_message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message and wait for response first_message": {
+      "main": [
+        [
+          {
+            "node": "Upsert row(s)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message and wait for response": {
+      "main": [
+        [
+          {
+            "node": "IF user want to change the data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF user want to change the data": {
+      "main": [
+        [
+          {
+            "node": "Send message and wait for response first_message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get row(s)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert row(s)1": {
+      "main": [
+        [
+          {
+            "node": "Get row(s)1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete a data table": {
+      "main": [
+        []
+      ]
+    },
+    "Get row(s)": {
+      "main": [
+        [
+          {
+            "node": "Send message and wait for response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Send a document",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Jobs": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s)1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Extract Jobs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send email": {
+      "main": [
+        []
+      ]
+    },
+    "Select rows from a table": {
+      "main": [
+        [
+          {
+            "node": "Send message and wait for response1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute a SQL query": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send message and wait for response first_message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message and wait for response first_message1": {
+      "main": [
+        [
+          {
+            "node": "Insert or update rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message and wait for response1": {
+      "main": [
+        [
+          {
+            "node": "IF user want to change the data1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF user want to change the data1": {
+      "main": [
+        [
+          {
+            "node": "Send message and wait for response first_message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Select rows from a table1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert or update rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a document1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Jobs1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Extract Jobs1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select rows from a table1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Help Message": {
+      "main": [
+        [
+          {
+            "node": "If select search after help",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If select search after help": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Help Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Execute a SQL query",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Help Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "dc61cc36-bca5-484d-9fce-02dbe49bcc09",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a7960d362e2946aa0c95c2e828d4f163ad31d3adaf9ec8ea9320d56b2b75fcaa"
+  },
+  "id": "deAnQPCKYgAi5yHdSs-Um",
+  "tags": []
+}
