@@ -1,16 +1,17 @@
-# 🔍 Automated Job Application Finder & Scraper (Local & Secure)
+# Job Scraper Telegram Bot 🤖
 
-A powerful, **locally run** job automation system that scrapes jobs from **Indeed, LinkedIn, Glassdoor, Naukri, Internshala, and more**. It runs entirely on your device (including Android tablets via **Termux**), ensuring complete privacy and control. Integrates directly with a local **n8n** workflow to process jobs and send them to you.
+A powerful automation tool that helps you find jobs across multiple platforms (LinkedIn, Indeed, Glassdoor, Google, etc.) directly from Telegram. This project combines a **Python Flask backend** for scraping with an **n8n workflow** for user interaction and orchestration.
 
-## 🚀 Key Features
+## 🚀 Features
 
-- **🛡️ 100% Local**: Runs on your machine (Mac, Windows, Linux, Android/Termux). No cloud costs.
-- **🌐 Multi-Site Scraping**: Hunts jobs across global & regional platforms (Indeed, LinkedIn, Glassdoor, Naukri, Internshala, Bayt, etc.).
-- **🤖 Automated Workflows**: Connects to a local n8n instance to filter, process, and email results automatically.
-- **📱 Android/Termux Ready**: Optimized for low-resource environments (runs smoothly on 4GB RAM tablets).
-- **🔎 Smart Filtering**: Filters by location, remote status, job type (internship/full-time), and recency.
-- **💾 Auto-Backup**: Saves all job data locally as JSON files instantly.
-- **📧 Easy Alerts**: Uses standard SMTP (Zoho, Gmail, Outlook) for reliable email notifications.
+-   **Multi-Platform Scraping**: Scrapes jobs from LinkedIn, Indeed, Glassdoor, Google, ZipRecruiter, Naukri, Internshala, and more.
+-   **Smart User Management**: Remembers user preferences (Role, Location, Job Type) using a PostgreSQL database.
+-   **Smart AI Matching**: Uses AI to analyze your resume's skills and experience against scraped listings to surface the most relevant opportunities.
+-   **Interactive Telegram Bot**: specific workflows for new vs. existing users.
+-   **AI-Powered CV Tailoring**: Generates a custom-tailored CV for each of your top job matches, all within Telegram.
+-   **CSV Export**: Delivers a formatted CSV file with all job listings directly to your Telegram chat.
+-   **Custom Filters**: Supports filtering by remote status, job type (Full-time, Intern, etc.), and posting date.
+
 
 ## 📋 Supported Job Sites
 
@@ -52,83 +53,90 @@ from jobspy import scrape_jobs
 - ✅ **Offline Deploy**: Works in restricted environments (Railway, Termux)
 - ✅ **Dependencies Bundled**: All requirements in one `requirements.txt`
 
-### What JobSpy Does
 
-JobSpy handles all the heavy lifting:
-1. **Multi-site scraping** - Connects to Indeed, LinkedIn, Glassdoor, etc.
-2. **Data normalization** - Returns consistent job data structure
-3. **Smart filtering** - Applies location, job type, and recency filters
-4. **Rate limit handling** - Manages request timing per site
 
-### Our Wrapper Layer
+## 🏗️ Architecture
 
-The Flask server (`server.py`) acts as a **clean REST API wrapper** around JobSpy:
-- Accepts simple JSON parameters
-- Maps them to JobSpy's function signature
-- Returns cleaned, JSON-serialized results
-- Handles errors gracefully
+![Workflow Diagram](workflow_screenshot.png)
 
-**Example Flow:**
+1.  **Orchestration (n8n)**: The `JOB_AUTOMATION.json` file contains the logic for handling Telegram messages, branching logic for user flows, and database interactions.
+2.  **Scraping Backend (Python)**: `server.py` runs a Flask app that accepts search parameters, utilizes the `JobSpy` library to scrape jobs, and returns the data as JSON.
+3.  **Database (PostgreSQL)**: Stores user preferences and search history for quick access.
+
+
+
+## 🛠️ Setup & Installation
+
+### Prerequisites
+
+-   Python 3.9+
+-   n8n (Self-hosted or Cloud)
+-   PostgreSQL Database
+-   Telegram Bot Token (via @BotFather)
+
+### Step 1: Backend Setup
+
+1.  Clone the repository and navigate to the folder.
+2.  Install dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
+3.  Start the Flask server:
+    ```bash
+    python server.py
+    ```
+    *The server will start on `http://localhost:5000`.*
+
+### Step 2: n8n Workflow Setup
+
+1.  **Import Workflow**:
+    -   Open your n8n dashboard.
+    -   Click **"Add Workflow"** -> **"Import from..."** -> **"File"**.
+    -   Select `JOB_AUTOMATION.json`.
+
+2.  **Configure Credentials**:
+    You will need to set up the following credentials in n8n for the nodes to work:
+    -   **Telegram API**: Enter your Bot Token from BotFather.
+    -   **PostgreSQL**: Enter your database connection details (Host, User, Password, Database).
+
+3.  **Update HTTP Request Node**:
+    -   In the n8n workflow, locate the **"HTTP Request"** node (which calls the scraper).
+    -   Update the **URL** to point to your backend.
+        -   If running locally with n8n (e.g., via tunnel or Docker): `http://host.docker.internal:5000/job-search` or your public tunnel URL (e.g., using ngrok).
+        -   The default in the file is a deployed Railway URL: `url`. Change this if you are deploying your own backend.
+
+### Step 3: Database
+
+Ensure your PostgreSQL database is running. The n8n workflow uses a table named `job_search_preferences`. You can create it using the following SQL command:
+
+```sql
+CREATE TABLE IF NOT EXISTS job_search_preferences (
+    user_id BIGINT PRIMARY KEY,
+    search_term TEXT,
+    location TEXT,
+    google_search_term TEXT,
+    default_country TEXT,
+    job_type TEXT,
+    is_remote BOOLEAN,
+    internshala_search_term TEXT,
+    hours_old INTEGER,
+    updated_at TIMESTAMP
+);
 ```
-User/n8n → POST /job-search → Flask API → JobSpy Library → Job Sites → Results
-```
 
-### Supported Sites via JobSpy
+## 🤖 Usage
 
-JobSpy currently supports these platforms:
-- Indeed, LinkedIn, Glassdoor, Google Jobs (Global)
-- ZipRecruiter (USA/Canada)
-- Naukri, Internshala (India)
-- Bayt (Middle East)
-- BDJobs (Bangladesh)
+1.  Start your Telegram Job Bot.
+2.  **New Users**: The bot will ask for:
+    -   Search Term (e.g., "Software Engineer")
+    -   Location (e.g., "New York")
+    -   Google Search Term (optional, for specific Google Job queries)
+    -   Job Type & Remote Preferences
+3.  **Existing Users**: The bot will recall your last settings and ask if you want to **"Run Search"** immediately or **"Update Settings"**.
+4.  **Results & Tailoring**: You will be presented with two options:
+    -   **Get Complete Job File**: Receive a raw `.csv` file with all found job openings.
+    -   **Personalized Matches**: Upload your current Resume/CV. The bot will analyze your resume against the scraped jobs, find the best matches, and generate a **custom-tailored CV** for each specific role to maximize your chances.
 
----
-
-## ⚡ Quick Start
-
-### 1. Installation
-
-```bash
-# Manual install
-pip install -r requirements.txt
-```
-
-### 2. Run the Server
-
-```bash
-python server.py
-# Server starts on http://localhost:5000
-```
-
-### 3. Usage with n8n
-
-Create an HTTP Request node in n8n sending a POST request to `http://localhost:5000/job-search` (or your Ngrok URL) with this JSON body:
-
-```json
-{
-  "SEARCH_TERM": "python developer",
-  "LOCATION": "India",
-  "HOURS_OLD": 72,
-  "JOB_TYPE": "internship",
-  "IS_REMOTE": true
-}
-```
-
-### 4. Android (Termux) Setup (Optional - For Testing)
-
-**Note:** The Termux setup is **optional** and was used for testing on an old Android device. It's **not necessary** for production use.
-
-For production, it's recommended to:
-- Deploy Flask server on **Railway** (free cloud hosting)
-- Run n8n locally on your main computer or use n8n Cloud
-
-If you still want to experiment with Termux, see [TERMUX_SETUP.md](TERMUX_SETUP.md) for details.
-
----
-
-## ⚙️ Configuration
-
-No `.env` file required! All parameters are passed directly via the API.
 
 ### API Parameters (POST /job-search)
 
@@ -145,25 +153,6 @@ No `.env` file required! All parameters are passed directly via the API.
 
 ---
 
-## 📂 Output
-
-### n8n Payload
-```json
-{
-  "success": true,
-  "jobs": [
-    {
-      "title": "Software Developer Intern",
-      "company": "Tech Company",
-      "location": "Bangalore, India",
-      "job_url": "https://...",
-      "site": "linkedin"
-    }
-  ]
-}
-```
-
----
 
 ## 📜 Credits & License
 
