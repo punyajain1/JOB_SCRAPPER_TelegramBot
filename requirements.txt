@@ -33,3 +33,4 @@ python-telegram-bot>=20.7
 # Flask Server
 flask>=3.0.0
 python-dotenv>=1.0.0
+flask_cors
