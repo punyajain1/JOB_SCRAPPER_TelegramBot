@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import os
 import json
 import sys
@@ -12,6 +13,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'Job
 from jobspy import scrape_jobs
 
 app = Flask(__name__)
+CORS(app) # Enable CORS for all routes
 
 def json_serial(obj):
     """JSON serializer for objects not serializable by default"""
