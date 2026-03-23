@@ -71,9 +71,9 @@ def job_search():
             }), 400
         
         # Set defaults for hardcoded parameters
-        results_wanted = 100
-        distance = 50
-        verbose = 1
+        results_wanted = 200
+        distance = 100
+        verbose = 10
         linkedin_fetch = True
         
         # Parse parameters directly
@@ -96,11 +96,11 @@ def job_search():
         else:
             job_type = None
         
-        google_search_term = data.get('GOOGLE_SEARCH_TERM', '') or None
+        google_search_term = data.get('GOOGLE_SEARCH_TERM', '') or f"{search_term} jobs near {location} since last week"
         internshala_search_term = data.get('INTERNSHALA_SEARCH_TERM', '') or None
         
         # Define sites based on location
-        ALL_SITES = ["indeed", "linkedin", "glassdoor", "google", "zip_recruiter", "naukri", "internshala", "bdjobs", "bayt"]
+        ALL_SITES = ["indeed", "linkedin", "glassdoor", "google", "naukri", "internshala"]
         current_sites = ALL_SITES.copy()
         
         is_india = 'India' in location or country == 'India'
