@@ -6,7 +6,7 @@ from datetime import datetime, date
 import pandas as pd
 
 # Add JobSpy to path
-sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'JobSpy-main_new'))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'JobSpy-main'))
 
 # Import JobSpy
 from jobspy import scrape_jobs
@@ -37,7 +37,19 @@ def job_search():
              DEFAULT_COUNTRY, JOB_TYPE, IS_REMOTE, INTERNSHALA_SEARCH_TERM
     """
     try:
-        data = request.get_json()
+        # Require JSON content-type to avoid 415 errors
+        if not request.is_json:
+            return jsonify({
+                'success': False,
+                'message': "Content-Type must be application/json"
+            }), 400
+
+        data = request.get_json(silent=True)
+        if data is None:
+            return jsonify({
+                'success': False,
+                'message': 'Invalid or empty JSON body'
+            }), 400
         
         if not data:
             return jsonify({
@@ -184,6 +196,6 @@ if __name__ == '__main__':
     print("\n📖 Available Endpoints:")
     print("   GET    /health        - Health check")
     print("   POST   /job-search    - Scrape jobs and return results")
-    print("\n🌐 Server running on http://localhost:5000\n")
+    print("\n🌐 Server running on http://localhost:5050\n")
     
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5050)

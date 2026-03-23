@@ -13,16 +13,16 @@ lxml>=4.9.0
 # Data validation
 pydantic>=2.3.0
 
-# Markdown conversion
-markdownify>=1.1.0
+# Markdown conversion (python-jobspy constraint)
+markdownify>=0.13.1,<0.14.0
 
 # TLS/SSL handling
 tls-client>=1.0.1
 urllib3>=2.0.0
 certifi>=2023.0.0
 
-# Numerical operations (JobSpy requires specific version)
-numpy==1.26.3
+# Numerical operations (satisfies scipy >=1.17.1 and JobSpy)
+numpy>=1.26.4,<2.7
 
 # Regex operations (JobSpy requirement)
 regex>=2024.4.28

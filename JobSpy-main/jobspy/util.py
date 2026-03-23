@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import logging
 import re
-import ssl
 from itertools import cycle
 
 import numpy as np
@@ -11,33 +10,10 @@ import tls_client
 import urllib3
 from markdownify import markdownify as md
 from requests.adapters import HTTPAdapter, Retry
-from urllib3.util.ssl_ import create_urllib3_context
 
 from jobspy.model import CompensationInterval, JobType, Site
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
-# Fix for SSL errors on macOS + Python 3.13 + OpenSSL 3.x
-try:
-    urllib3.util.ssl_.DEFAULT_CIPHERS = 'DEFAULT@SECLEVEL=1'
-except:
-    pass
-
-
-# Custom SSL Adapter for handling SSL issues
-class SSLAdapter(HTTPAdapter):
-    """An HTTPS adapter that uses a custom SSL context."""
-    
-    def init_poolmanager(self, *args, **kwargs):
-        ctx = create_urllib3_context()
-        ctx.check_hostname = False
-        ctx.verify_mode = ssl.CERT_NONE
-        try:
-            ctx.set_ciphers('DEFAULT@SECLEVEL=1')
-        except:
-            pass
-        kwargs['ssl_context'] = ctx
-        return super().init_poolmanager(*args, **kwargs)
 
 
 def create_logger(name: str):
@@ -93,12 +69,8 @@ class RequestsRotating(RotatingProxySession, requests.Session):
                 status_forcelist=[500, 502, 503, 504, 429],
                 backoff_factor=delay,
             )
-            adapter = SSLAdapter(max_retries=retries)
+            adapter = HTTPAdapter(max_retries=retries)
             self.mount("http://", adapter)
-            self.mount("https://", adapter)
-        else:
-            # Always use SSL adapter even without retry
-            adapter = SSLAdapter()
             self.mount("https://", adapter)
 
     def request(self, method, url, **kwargs):
@@ -156,9 +128,6 @@ def create_session(
 
     if ca_cert:
         session.verify = ca_cert
-    else:
-        # Disable SSL verification to fix Python 3.13 + macOS issues
-        session.verify = False
 
     return session
 
