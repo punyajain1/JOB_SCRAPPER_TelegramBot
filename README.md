@@ -1,5 +1,12 @@
 # Job Scraper Telegram Bot 🤖
 
+![Python](https://img.shields.io/badge/Python-3.9%2B-3776AB?logo=python&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-API-000000?logo=flask&logoColor=white)
+![n8n](https://img.shields.io/badge/n8n-Workflow-EA4B71?logo=n8n&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-4169E1?logo=postgresql&logoColor=white)
+![Telegram](https://img.shields.io/badge/Telegram-Bot-26A5E4?logo=telegram&logoColor=white)
+![JobSpy](https://img.shields.io/badge/JobSpy-Scraper-2E7D32)
+
 A powerful automation tool that helps you find jobs across multiple platforms (LinkedIn, Indeed, Glassdoor, Google, etc.) directly from Telegram. This project combines a **Python Flask backend** for scraping with an **n8n workflow** for user interaction and orchestration.
 
 ## 🚀 Features
@@ -57,11 +64,41 @@ from jobspy import scrape_jobs
 
 ## 🏗️ Architecture
 
-![Workflow Diagram](workflow_screenshot.png)
+```mermaid
+flowchart LR
+    U1[Telegram User] --> W1[n8n Telegram Workflow\nJOB_AUTOMATION.json]
+    W1 --> DB[(PostgreSQL\nUser Preferences)]
+    W1 --> API[Flask Backend\nPOST /job-search]
+    API --> JS[JobSpy Engine\nMulti-site Scraping]
+    JS --> API
+    API --> W1
+    W1 --> U1
+
+    U2[Web User] --> FE[Simple Frontend\njob_extractor_fe]
+    FE -->|Reuses pre-hosted backend| API
+    API --> FE
+    FE --> CSV[Downloadable CSV\nAll extracted jobs]
+```
+
+### n8n Workflow
+
+![n8n Workflow](workflow_screenshot.png)
 
 1.  **Orchestration (n8n)**: The `JOB_AUTOMATION.json` file contains the logic for handling Telegram messages, branching logic for user flows, and database interactions.
 2.  **Scraping Backend (Python)**: `server.py` runs a Flask app that accepts search parameters, utilizes the `JobSpy` library to scrape jobs, and returns the data as JSON.
 3.  **Database (PostgreSQL)**: Stores user preferences and search history for quick access.
+4.  **Simple Web Frontend**: The frontend companion app at **[job_extractor_fe](https://github.com/punyajain1/job_extractor_fe)** provides a simple UI to trigger extraction and download a CSV of all jobs.
+5.  **Backend Reuse**: The frontend reuses the same pre-hosted backend used by the Telegram-based workflow.
+
+
+## 🌐 Frontend Companion
+
+Simple browser interface over Telegram:
+
+- **Repo**: https://github.com/punyajain1/job_extractor_fe
+- **Purpose**: Simple frontend for fetching extracted jobs from supported sites
+- **Output**: Downloadable CSV file containing all extracted job listings
+- **Integration**: Reuses the pre-hosted backend from this Telegram version
 
 
 
