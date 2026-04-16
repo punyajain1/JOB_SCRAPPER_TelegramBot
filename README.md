@@ -1,4 +1,4 @@
-# Job Scraper Telegram Bot 🤖
+# Job Scraper Telegram Bot (ApplyFlow)
 
 ![Python](https://img.shields.io/badge/Python-3.9%2B-3776AB?logo=python&logoColor=white)
 ![Flask](https://img.shields.io/badge/Flask-API-000000?logo=flask&logoColor=white)
