@@ -87,7 +87,7 @@ flowchart LR
 1.  **Orchestration (n8n)**: The `JOB_AUTOMATION.json` file contains the logic for handling Telegram messages, branching logic for user flows, and database interactions.
 2.  **Scraping Backend (Python)**: `server.py` runs a Flask app that accepts search parameters, utilizes the `JobSpy` library to scrape jobs, and returns the data as JSON.
 3.  **Database (PostgreSQL)**: Stores user preferences and search history for quick access.
-4.  **Simple Web Frontend**: The frontend companion app at **[job_extractor_fe](https://github.com/punyajain1/job_extractor_fe)** provides a simple UI to trigger extraction and download a CSV of all jobs.
+4.  **Simple Web Frontend**: The frontend companion app at **[ApplyFlow_fe](https://github.com/punyajain1/ApplyFlow-fe)** provides a simple UI to trigger extraction and download a CSV of all jobs.
 5.  **Backend Reuse**: The frontend reuses the same pre-hosted backend used by the Telegram-based workflow.
 
 
@@ -95,9 +95,8 @@ flowchart LR
 
 Simple browser interface over Telegram:
 
-- **Repo**: https://github.com/punyajain1/job_extractor_fe
+- **Repo**: https://github.com/punyajain1/ApplyFlow-fe
 - **Purpose**: Simple frontend for fetching extracted jobs from supported sites
-- **Output**: Downloadable CSV file containing all extracted job listings
 - **Integration**: Reuses the pre-hosted backend from this Telegram version
 
 
